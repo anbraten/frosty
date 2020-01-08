@@ -4,8 +4,7 @@ if (isset($_GET['deleteEmployees']) && $_GET['deleteEmployees']) {
   $stmt->bind_param('i', $_GET['deleteEmployees']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'employees') {
@@ -13,8 +12,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'employees') {
   $stmt->bind_param('si', $_POST['name'], $_POST['salary']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT * FROM employees');
@@ -31,7 +29,7 @@ $result = $stmt->get_result();
     </thead>
     <?php
       while($row = $result->fetch_assoc()) {
-        echo '<tr><td>'.$row['name'].'</td><td>'.$row['salary'].'€</td><td><a href="?deleteEmployees='.$row['id'].'">x</a></td></tr>';
+        echo '<tr><td>'.$row['name'].'</td><td>'.$row['salary'].'€</td><td><a href="?p=employees&deleteEmployees='.$row['id'].'">x</a></td></tr>';
       }
     ?>
     <tr>

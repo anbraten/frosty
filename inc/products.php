@@ -4,8 +4,7 @@ if (isset($_GET['deleteProducts']) && $_GET['deleteProducts']) {
   $stmt->bind_param('i', $_GET['deleteProducts']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'products') {
@@ -13,8 +12,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'products') {
   $stmt->bind_param('sii', $_POST['name'], $_POST['priceBuy'], $_POST['priceSell']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT * FROM products');
@@ -32,7 +30,7 @@ $result = $stmt->get_result();
     </thead>
     <?php
       while($row = $result->fetch_assoc()) {
-        echo '<tr><td>'.$row['name'].'</td><td>'.$row['priceBuy'].' €</td><td>'.$row['priceSell'].' €</td><td><a href="?deleteProducts='.$row['id'].'">x</a></td></tr>';
+        echo '<tr><td>'.$row['name'].'</td><td>'.$row['priceBuy'].' €</td><td>'.$row['priceSell'].' €</td><td><a href="?p=products&deleteProducts='.$row['id'].'">x</a></td></tr>';
       }
     ?>
     <tr>

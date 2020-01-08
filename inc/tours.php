@@ -1,20 +1,22 @@
 <?php
 if (isset($_GET['deleteTour']) && $_GET['deleteTour']) {
-  $stmt = $db->prepare('DELETE FROM tours where id=?');
+  $stmt = $db->prepare('DELETE FROM tours WHERE id=?');
   $stmt->bind_param('i', $_GET['deleteTour']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  $stmt = $db->prepare('UPDATE orders SET tour=null WHERE tour=?');
+  $stmt->bind_param('i', $_GET['deleteTour']);
+  $stmt->execute();
+
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'tour') {
-  $stmt = $db->prepare('INSERT INTO tours (vehicle, employee, lengthPlanned) VALUES(?, ?, ?)');
-  $stmt->bind_param('iii', $_POST['vehicle'], $_POST['employee'], $_POST['lengthPlanned']);
+  $stmt = $db->prepare('INSERT INTO tours (vehicle, employee) VALUES(?, ?)');
+  $stmt->bind_param('ii', $_POST['vehicle'], $_POST['employee']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'tourOrders') {
@@ -22,26 +24,15 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourOrders') {
   $stmt->bind_param('ii', $_POST['tour'], $_POST['order']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
-if (isset($_POST['table']) && $_POST['table'] === 'tourLength') {
-  $stmt = $db->prepare('UPDATE tours SET length=? WHERE id=?');
-  $stmt->bind_param('ii', $_POST['length'], $_POST['tour']);
+if (isset($_POST['table']) && $_POST['table'] === 'tourLengthPlanned') {
+  $stmt = $db->prepare('UPDATE tours SET lengthPlanned=? WHERE id=?');
+  $stmt->bind_param('ii', $_POST['lengthPlanned'], $_POST['tour']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
-}
-
-if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
-  $stmt = $db->prepare('UPDATE tours SET time=? WHERE id=?');
-  $stmt->bind_param('ii', $_POST['time'], $_POST['tour']);
-  $stmt->execute();
-
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT t.id, t.length, t.lengthPlanned, t.time, e.name AS employee, v.model AS vehicle FROM tours t INNER JOIN employees e ON e.id=t.employee INNER JOIN vehicles v ON v.id=t.vehicle');
@@ -50,39 +41,38 @@ $result = $stmt->get_result();
 
 ?>
 
-<h2>Tours</h2>
+<h2>Touren</h2>
 <table>
   <thead>
     <tr><th>Fahrzeug</th><th>Mitarbeiter</th><th>Länge - Geplant</th><th>Länge - Tatsächlich</th><th>Dauer</th><th>Bestellungen</th><th></th></tr>
   </thead>
   <?php
     while($row = $result->fetch_assoc()) {
-      echo '<tr><td>'.$row['vehicle'].'</td><td>'.$row['employee'].'</td><td>'.$row['lengthPlanned'].'</td>';
+      echo '<tr><td>'.$row['vehicle'].'</td><td>'.$row['employee'].'</td>';
 
-      if ($row['length']) {
-        echo '<td>'.$row['length'].'</td>';
+      if ($row['lengthPlanned']) {
+        echo '<td>'.$row['lengthPlanned'].' km</td>';
       } else {
         echo '<td>';
         echo '<form method="POST">';
-        echo '<input type="hidden" name="table" value="tourLength" />';
+        echo '<input type="hidden" name="table" value="tourLengthPlanned" />';
         echo '<input type="hidden" name="tour" value="'.$row['id'].'" />';
-        echo '<input type="text" name="length" />';
+        echo '<input type="text" name="lengthPlanned" />';
         echo '<input type="submit" value="OK" />';
         echo '</form>';
         echo '</td>';
       }
 
-      if ($row['time']) {
-        echo '<td>'.$row['time'].'</td>';
+      if ($row['length']) {
+        echo '<td>'.$row['length'].' km</td>';
       } else {
-        echo '<td>';
-        echo '<form method="POST">';
-        echo '<input type="hidden" name="table" value="tourTime" />';
-        echo '<input type="hidden" name="tour" value="'.$row['id'].'" />';
-        echo '<input type="text" name="time" />';
-        echo '<input type="submit" value="OK" />';
-        echo '</form>';
-        echo '</td>';
+        echo '<td></td>';
+      }
+
+      if ($row['time']) {
+        echo '<td>'.$row['time'].' Stunden</td>';
+      } else {
+        echo '<td></td>';
       }
 
       echo '<td>';
@@ -114,7 +104,7 @@ $result = $stmt->get_result();
       echo '</form>';
 
       echo '</td>';
-      echo '<td><a href="?deleteTour='.$row['id'].'">x</a></td></tr>';
+      echo '<td><a href="?p=tours&deleteTour='.$row['id'].'">x</a></td></tr>';
     }
   ?>
   <tr>
@@ -148,7 +138,7 @@ $result = $stmt->get_result();
           ?>
         </select>
       </td>
-      <td><input type="text" name="lengthPlanned" placeholder="Geplante Länge (km)" required /></td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>

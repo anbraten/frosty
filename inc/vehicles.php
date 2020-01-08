@@ -4,8 +4,7 @@ if (isset($_GET['deleteVehicles']) && $_GET['deleteVehicles']) {
   $stmt->bind_param('i', $_GET['deleteVehicles']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'vehicles') {
@@ -13,8 +12,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'vehicles') {
   $stmt->bind_param('ss', $_POST['model'], $_POST['license_plate']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT * FROM vehicles');
@@ -31,7 +29,7 @@ $result = $stmt->get_result();
     </thead>
     <?php
       while($row = $result->fetch_assoc()) {
-        echo '<tr><td>'.$row['model'].'</td><td>'.$row['license_plate'].'</td><td><a href="?deleteVehicles='.$row['id'].'">x</a></td></tr>';
+        echo '<tr><td>'.$row['model'].'</td><td>'.$row['license_plate'].'</td><td><a href="?p=vehicles&deleteVehicles='.$row['id'].'">x</a></td></tr>';
       }
     ?>
     <tr>

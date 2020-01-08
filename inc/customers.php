@@ -4,8 +4,7 @@ if (isset($_GET['deleteCustomer']) && $_GET['deleteCustomer']) {
   $stmt->bind_param('i', $_GET['deleteCustomer']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'customer') {
@@ -13,8 +12,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'customer') {
   $stmt->bind_param('sssi', $_POST['name'], $_POST['street'], $_POST['city'], $_POST['postalcode']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT * FROM customers');
@@ -31,7 +29,7 @@ $result = $stmt->get_result();
     </thead>
     <?php
       while($row = $result->fetch_assoc()) {
-        echo '<tr><td>'.$row['name'].'</td><td>'.$row['street'].'</td><td>'.$row['postalcode'].'</td><td>'.$row['city'].'</td><td><a href="?deleteCustomer='.$row['id'].'">x</a></td></tr>';
+        echo '<tr><td>'.$row['name'].'</td><td>'.$row['street'].'</td><td>'.$row['postalcode'].'</td><td>'.$row['city'].'</td><td><a href="?p=customers&deleteCustomer='.$row['id'].'">x</a></td></tr>';
       }
     ?>
     <tr>

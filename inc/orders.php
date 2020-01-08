@@ -4,8 +4,7 @@ if (isset($_GET['deleteOrder']) && $_GET['deleteOrder']) {
   $stmt->bind_param('i', $_GET['deleteOrder']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'order') {
@@ -13,8 +12,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'order') {
   $stmt->bind_param('is', $_POST['customer'], $_POST['date']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 if (isset($_POST['table']) && $_POST['table'] === 'orderedItems') {
@@ -22,8 +20,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'orderedItems') {
   $stmt->bind_param('ii', $_POST['orderId'], $_POST['product']);
   $stmt->execute();
 
-  header('location: '.$baseUrl);
-  exit();
+  reload();
 }
 
 $stmt = $db->prepare('SELECT o.id, o.date, c.name FROM orders o INNER JOIN customers c ON c.id=o.customer');
@@ -64,7 +61,7 @@ $result = $stmt->get_result();
       echo '<input type="submit" value="OK" />';
       echo '</form>';
 
-      echo '</td><td><a href="?deleteOrder='.$row['id'].'">x</a></td></tr>';
+      echo '</td><td><a href="?p=orders&deleteOrder='.$row['id'].'">x</a></td></tr>';
     }
   ?>
   <tr>
@@ -85,6 +82,7 @@ $result = $stmt->get_result();
         </select>
       </td>
       <td><input type="datetime-local" name="date" placeholder="Datum" required /></td>
+      <td></td>
       <td><input type="submit" value="OK" /></td>
     </form>
   </tr>
