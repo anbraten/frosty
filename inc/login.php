@@ -13,8 +13,10 @@ if (isset($_POST['login'])) {
 }
 ?>
 
-<h2>Login</h2>
-<form method="POST">
-  <input type="password" name="login" value="" placeholder="Passwort" />
-  <input type="submit" value="Login" />
-</form>
+<div class="panel">
+  <h2>Login</h2>
+  <form method="POST">
+    <input type="password" name="login" value="" placeholder="Passwort" />
+    <input type="submit" value="Login" />
+  </form>
+</div>

@@ -24,10 +24,6 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
 ?>
 
 <ul class="menu">
-  <li style="float:right"><a class="active" href="<?php echo $baseUrl; ?>?logout">Logout</a></li>
-</ul>
-
-<div class="content">
   <?php
     $stmt = $db->prepare('SELECT e.name FROM employees e WHERE id=?');
     $stmt->bind_param('i', $_SESSION['driver']);
@@ -35,13 +31,15 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
     $result = $stmt->get_result();
 
     while ($row = $result->fetch_assoc()) {
-      echo '<h2>Hallo, '.$row['name'].'</h2>';
+      echo '<li><a class="active" href="#">Hallo, '.$row['name'].'</a></li>';
     }
   ?>
+  <li style="float:right"><a class="active" href="<?php echo $baseUrl; ?>?logout">Logout</a></li>
+</ul>
 
-  <br /><br />
-
+<div class="content">
   <h2>Touren</h2>
+  <br /><br />
   <?php
     $stmt = $db->prepare('SELECT t.id, t.length, t.lengthPlanned, t.time, v.model AS vehicle FROM tours t INNER JOIN employees e ON e.id=t.employee INNER JOIN vehicles v ON v.id=t.vehicle WHERE t.employee=? AND t.lengthPlanned IS NOT NULL');
     $stmt->bind_param('i', $_SESSION['driver']);
@@ -54,10 +52,10 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
   </thead>
   <?php
     while($row = $result->fetch_assoc()) {
-      echo '<tr><td>'.$row['vehicle'].'</td><td>'.$row['lengthPlanned'].'</td>';
+      echo '<tr><td>'.$row['vehicle'].'</td><td>'.$row['lengthPlanned'].' km</td>';
 
       if ($row['length']) {
-        echo '<td>'.$row['length'].'</td>';
+        echo '<td>'.$row['length'].' km</td>';
       } else {
         echo '<td>';
         echo '<form method="POST">';
@@ -70,7 +68,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
       }
 
       if ($row['time']) {
-        echo '<td>'.$row['time'].'</td>';
+        echo '<td>'.$row['time'].' Stunden</td>';
       } else {
         echo '<td>';
         echo '<form method="POST">';

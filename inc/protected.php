@@ -31,5 +31,6 @@ if (isset($_GET['logout'])) {
       echo '>'.$name.'</a></li>';
     }
   ?>
-  <li style="float:right"><a class="active" href="<?php echo $baseUrl; ?>/?logout">Logout</a></li>
+  <li style="float:right"><a class="active" href="<?php echo $baseUrl; ?>?logout">Logout</a></li>
+  <li style="float:right"><a href="<?php echo $baseUrl; ?>/driver.php" target="_blank">Mitarbeiter Login</a></li>
 </ul>
