@@ -85,6 +85,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
       $stmt->bind_param('i', $row['id']);
       $stmt->execute();
       $result_orders = $stmt->get_result();
+      $stmt->close();
 
       echo '<table>';
       while ($row_orders = $result_orders->fetch_assoc()) {
@@ -99,5 +100,23 @@ if (isset($_POST['table']) && $_POST['table'] === 'tourTime') {
   </table>
   <br>
   <br>
-</div>
 
+  <h3>Deine Statisktik</h3>
+  <?php
+    $range = '';
+    $stmt = $db->prepare('SELECT COUNT(t.id) AS num, SUM(t.length) AS length, SUM(t.lengthPlanned) AS lengthPlanned, (SUM(t.time) * e.salary) AS earnings, SUM(t.time) AS hours FROM tours t INNER JOIN employees e ON e.id=t.employee INNER JOIN orders o ON o.tour=t.id '.$range.' AND e.id=? AND t.length IS NOT NULL AND t.time IS NOT NULL GROUP BY e.id ORDER BY num DESC');
+    $stmt->bind_param('i', $_SESSION['driver']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+  ?>
+  <table>
+    <thead>
+      <tr><th>Touren</th><th>Kilometer (gefahren / geschätzt)</th><th>Gearbeitete Stunden</th><th>Verdienst</th></tr>
+    </thead>
+    <?php
+      while($row = $result->fetch_assoc()) {
+        echo '<tr><td>'.$row['num'].'</td><td>'.$row['length'].' km / '.$row['lengthPlanned'].' km</td><td>'.$row['hours'].' Stunden</td><td>'.$row['earnings'].' €</td></tr>';
+      }
+    ?>
+  </table>
+</div>

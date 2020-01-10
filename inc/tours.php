@@ -83,7 +83,7 @@ $result = $stmt->get_result();
 
       echo '<ul>';
       while ($row_orders1 = $result_orders1->fetch_assoc()) {
-        echo '<li>'.$row_orders1['name'].' - '.$row_orders1['date'].'</li>';
+        echo '<li>'.$row_orders1['name'].' - '.date("d.m.Y H:i", strtotime($row_orders1['date'])).'</li>';
       }
       echo '</ul>';
 
@@ -97,7 +97,7 @@ $result = $stmt->get_result();
       echo '<select name="order" required>';
       echo '<option value="">---</option>';
       while ($row_orders2 = $result_orders2->fetch_assoc()) {
-        echo '<option value="'.$row_orders2['id'].'">'.$row_orders2['name'].' - '.$row_orders2['date'].'</option>';
+        echo '<option value="'.$row_orders2['id'].'">'.$row_orders2['name'].' - '.date("d.m.Y H:i", strtotime($row_orders2['date'])).'</option>';
       }
       echo '</select>';
       echo '<input type="submit" value="OK" />';

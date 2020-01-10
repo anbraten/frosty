@@ -23,7 +23,7 @@ if (isset($_POST['table']) && $_POST['table'] === 'orderedItems') {
   reload();
 }
 
-$stmt = $db->prepare('SELECT o.id, o.date, c.name FROM orders o INNER JOIN customers c ON c.id=o.customer');
+$stmt = $db->prepare('SELECT o.id, o.date, c.name FROM orders o INNER JOIN customers c ON c.id=o.customer ORDER BY o.date DESC');
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -35,7 +35,7 @@ $result = $stmt->get_result();
   </thead>
   <?php
     while($row = $result->fetch_assoc()) {
-      echo '<tr><td>'.$row['name'].'</td><td>'.$row['date'].'</td><td><ul>';
+      echo '<tr><td>'.$row['name'].'</td><td>'.date("d.m.Y H:i", strtotime($row['date'])).'</td><td><ul>';
 
       $stmt = $db->prepare('SELECT p.name FROM orderedItems o INNER JOIN products p ON p.id=o.product AND o.orderId=? ORDER BY p.name');
       $stmt->bind_param('i', $row['id']);
